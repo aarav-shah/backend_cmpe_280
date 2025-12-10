@@ -31,11 +31,15 @@ export const insertToQdrant = async (collectionName,id, vector, data) => {
     });
 }
 
-export const searchInQdrant = async (collectionName, vector) => {
-    const results = await qdrantClient.search(collectionName, {
+export const searchInQdrant = async (collectionName, vector, filter = null, limit = 5) => {
+    const searchParams = {
         vector: vector,
-        top: 5,
-    });
+        limit: limit,
+    };
+    if (filter) {
+        searchParams.filter = filter;
+    }
+    const results = await qdrantClient.search(collectionName, searchParams);
     return results;
 }
 
