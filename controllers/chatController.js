@@ -1,5 +1,6 @@
 import { BadRequestException } from "../exceptions/bad-request.js";
 import { ErrorCodes } from "../exceptions/root.js";
+import { handleQuery } from "../agents/router.agent.js";
 // import { groqClient } from "../services/groq.js";
 // import { getEmbedding } from "../services/jina.js";
 // import { searchInQdrant } from "../services/qdrant.js";

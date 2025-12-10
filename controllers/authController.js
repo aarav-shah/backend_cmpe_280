@@ -24,6 +24,23 @@ export const registerController = async(req, res, next) => {
     if (!userData.name || !userData.email || !userData.password || !userData.phoneNo) {
         return next(new BadRequestException("Please fill all the fields", ErrorCodes.ALL_FIELDS_REQUIRED));
     }
+    
+    // Check if email already exists
+    const existingUserByEmail = await prismaClient.user.findUnique({
+        where: { email: userData.email }
+    });
+    if (existingUserByEmail) {
+        return next(new BadRequestException("Email already exists. Please use a different email.", ErrorCodes.USER_ALREADY_EXISTS));
+    }
+    
+    // Check if phone number already exists
+    const existingUserByPhone = await prismaClient.user.findUnique({
+        where: { phoneNo: userData.phoneNo }
+    });
+    if (existingUserByPhone) {
+        return next(new BadRequestException("Phone number already exists. Please use a different phone number.", ErrorCodes.USER_ALREADY_EXISTS));
+    }
+    
     const hashPassword = await hashSync(userData.password, 10);
     const user = await prismaClient.user.create({
         data: {
@@ -51,11 +68,11 @@ export const loginController = async(req, res, next) => {
         }
     });
     if (!user) {
-        return next(new NotFoundException("User not found", ErrorCodes.USER_NOT_FOUND));
+        return next(new NotFoundException("Invalid email or password", ErrorCodes.USER_NOT_FOUND));
     }
     const isPasswordMatch = compareSync(userData.password, user.password);
     if (!isPasswordMatch) {
-        return next(new BadRequestException("Invalid password", ErrorCodes.INVALID_CREDENTIALS));
+        return next(new BadRequestException("Invalid email or password", ErrorCodes.INVALID_CREDENTIALS));
     }
     const token = jwt.sign({ id: user.id }, JWT_SECRET, { expiresIn: "1h" });
     return res.status(200).json({ message: "Login successfully", user: { name: user.name, email: user.email, phoneNo: user.phoneNo }, token });

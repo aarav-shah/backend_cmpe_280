@@ -1,5 +1,5 @@
 import {groqClient} from "../services/groq.js";
-import { handleHeathInfoQuery } from "./healthInfo.agent.js";
+import { handleHealthQuery } from "./healthInfo.agent.js";
 import { handleHealthProductQuery } from "./healthProduct.agent.js";
 
 export async function handleQuery(message){
@@ -7,7 +7,7 @@ export async function handleQuery(message){
 
     switch(domain){
         case "healthInfo":
-            return handleHeathInfoQuery(message);
+            return handleHealthQuery(message);
         case "healthProduct":
             return handleHealthProductQuery(message);
         default:
