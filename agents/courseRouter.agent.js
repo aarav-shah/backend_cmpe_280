@@ -31,7 +31,7 @@ User Query: ${message}
 Respond with only the domain name. Do not provide any explanations. Do not add any punctuation or formatting. Just the domain name.`;
 
   const res = await groqClient.chat.completions.create({
-    model: "openai/gpt-oss-20b",
+    model: "llama-3.3-70b-versatile",
     messages: [
       { role: "system", content: systemPrompt },
       { role: "user", content: message },
@@ -40,5 +40,10 @@ Respond with only the domain name. Do not provide any explanations. Do not add a
     max_tokens: 20,
   });
 
-  return res.choices[0].message.content.trim();
+  const domain = res.choices[0].message.content.trim();
+  console.log(`🔍 Query: "${message}"`);
+  console.log(`📊 Classified as: "${domain}"`);
+  
+  return domain;
 }
+

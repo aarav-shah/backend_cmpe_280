@@ -527,12 +527,19 @@ const courseDetails = [
   }
 ];
 
+// Ensure collections exist before seeding
+console.log("Ensuring Qdrant collections exist...");
+await ensureCollection("CourseDetails");
+await ensureCollection("CourseSchedule");
+
+console.log("Seeding CourseDetails...");
 for (const course of courseDetails) {
   const vector = await getEmbedding(
     `${course.code} ${course.title}. ${course.description}. Prerequisites: ${course.prerequisites.join(", ")}`
   );
   await insertToQdrant("CourseDetails", course.id, vector, course);
 }
+console.log(`Seeded ${courseDetails.length} course details.`);
 
 // Seed Course Schedule (sections with day/time/term)
 const courseSchedule = [
@@ -1324,6 +1331,7 @@ const courseSchedule = [
   }
 ]
 
+console.log("Seeding CourseSchedule...");
 // Ensure unique IDs for CourseSchedule entries during upsert
 for (let i = 0; i < courseSchedule.length; i++) {
   const section = courseSchedule[i];
@@ -1333,5 +1341,6 @@ for (let i = 0; i < courseSchedule.length; i++) {
   );
   await insertToQdrant("CourseSchedule", uniqueId, vector, { ...section, id: uniqueId });
 }
+console.log(`Seeded ${courseSchedule.length} course schedule entries.`);
 
-console.log("Seeding completed: HealthInfo, HealthProducts, CourseDetails, CourseSchedule.");
+console.log("✅ Seeding completed: CourseDetails, CourseSchedule.");

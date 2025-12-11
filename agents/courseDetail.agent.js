@@ -28,7 +28,7 @@ User Query: ${message}
 `.trim();
 
   const response = await groqClient.chat.completions.create({
-    model: "gpt-3.5-turbo",
+    model: "llama-3.3-70b-versatile",
     messages: [
       {
         role: "user",
